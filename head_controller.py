@@ -2,6 +2,7 @@ from controller import Robot
 import cv2
 import numpy as np
 import copy
+import math
 
 robot = Robot()
 
@@ -20,21 +21,24 @@ head_yaw_sensor = robot.getDevice("head_yaw_sensor")
 head_yaw_sensor.enable(timestep)
 head_pitch_sensor = robot.getDevice("head_pitch_sensor")
 head_pitch_sensor.enable(timestep)
+robot.step(timestep)
 
 cv2.namedWindow("frame")
 
-cv2.createTrackbar("lb", "frame",   59, 255, nothing)
-cv2.createTrackbar("lg", "frame",  30, 255, nothing)
-cv2.createTrackbar("lr", "frame",  49, 255, nothing)
-cv2.createTrackbar("hb", "frame",  99, 255, nothing)
-cv2.createTrackbar("hg", "frame",  246, 255, nothing)
-cv2.createTrackbar("hr", "frame", 255, 255, nothing)
-cv2.createTrackbar("area", "frame", 234, 1000, nothing)
+cv2.createTrackbar("lb", "frame",   0, 255, nothing)
+cv2.createTrackbar("lg", "frame",  160, 255, nothing)
+cv2.createTrackbar("lr", "frame",  160, 255, nothing)
+cv2.createTrackbar("hb", "frame",  40, 255, nothing)
+cv2.createTrackbar("hg", "frame",  210, 255, nothing)
+cv2.createTrackbar("hr", "frame", 190, 255, nothing)
+cv2.createTrackbar("area", "frame", 100, 1000, nothing)
 
 img_cy = camera.getHeight()//2
 img_cx = camera.getWidth()//2
 
 k=0.001
+
+head_yaw.setPosition(head_yaw_sensor.getValue() + 2*math.pi)
 
 while robot.step(timestep) != -1:
     
@@ -76,9 +80,7 @@ while robot.step(timestep) != -1:
         
         if (a < th_area):
             mask[np.where(labels == i)] = 0
-            head_yaw.setPosition(head_yaw_sensor.getValue() + 1)
-            print(head_yaw_sensor.getValue())
-            
+
         else:
             objects.append(((l, t), (l + w, t + h)))
             obj_x = (objects[0][1][0] + objects[0][0][0])//2
