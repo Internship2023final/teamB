@@ -51,11 +51,15 @@ def run_standup_front():
     time_factor = standup_front_trajectory["remap"](standup_front_timer)
     standup_front_timer += time_factor * timestep / 1000 
     if not standup_front_trajectory["over"](standup_front_timer):
+    #----------------------------------
+    #only if its not over
         commands = {}
         for joint_name, trajectory in standup_front_trajectory.items(): 
             target = trajectory(standup_front_timer)
             commands[joint_name] = target
-    send_commands(commands)
+        send_commands(commands)
+    #------------------------------------
+   
     pass
 
 def run_standup_back():
@@ -67,7 +71,7 @@ def run_standup_back():
         for joint_name, trajectory in standup_back_trajectory.items(): 
             target = trajectory(standup_back_timer)
             commands[joint_name] = target
-    send_commands(commands)
+        send_commands(commands)
     pass
 
 # create the Robot instance.
@@ -140,6 +144,3 @@ while robot.step(timestep) != -1:
             standup_is_over = True
     else:
         pass
-        
-        
-        
