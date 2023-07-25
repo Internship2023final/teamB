@@ -7,28 +7,26 @@ import math
 name_obj = "red player 1"
 
 # Create a Supervisor instance
-supervisor = Supervisor()
+robot = Supervisor()
 
-# Get the object node using its name
-object_node = supervisor.getFromDef(name_obj)
+ball_node = robot.getFromDef('BALL')
 
 def nothing(val):
     pass
     
-timestep = int(supervisor.getBasicTimeStep())
+timestep = int(robot.getBasicTimeStep())
 
-camera = supervisor.getDevice("right_camera")
+camera = robot.getDevice("right_camera")
 camera.enable(timestep)
 
-head_yaw = supervisor.getDevice("head_yaw")
-head_pitch = supervisor.getDevice("head_pitch")
+head_yaw = robot.getDevice("head_yaw")
+head_pitch = robot.getDevice("head_pitch")
 
-head_yaw_sensor = supervisor.getDevice("head_yaw_sensor")
+head_yaw_sensor = robot.getDevice("head_yaw_sensor")
 head_yaw_sensor.enable(timestep)
-head_pitch_sensor = supervisor.getDevice("head_pitch_sensor")
+head_pitch_sensor = robot.getDevice("head_pitch_sensor")
 head_pitch_sensor.enable(timestep)
-supervisor.step(timestep)
-
+robot.step(timestep)
 
 cv2.namedWindow("frame")
 
@@ -39,7 +37,7 @@ cv2.createTrackbar("lr", "frame",  180, 255, nothing)
 cv2.createTrackbar("hb", "frame",  20, 255, nothing)
 cv2.createTrackbar("hg", "frame",  210, 255, nothing)
 cv2.createTrackbar("hr", "frame", 255, 255, nothing)
-cv2.createTrackbar("area", "frame", 500, 1000, nothing)
+cv2.createTrackbar("area", "frame", 250, 1000, nothing)
 
 img_cy = camera.getHeight()//2
 img_cx = camera.getWidth()//2
@@ -48,7 +46,7 @@ k=0.001
 
 head_yaw.setPosition(head_yaw_sensor.getValue() + 2*math.pi)
 
-while supervisor.step(timestep) != -1:
+while robot.step(timestep) != -1:
     
     camera_data = camera.getImage()
     img = np.frombuffer(camera_data, np.uint8).reshape(camera.getHeight(), camera.getWidth(), 4)
@@ -100,12 +98,6 @@ while supervisor.step(timestep) != -1:
             head_yaw.setPosition(head_yaw_sensor.getValue() - yaw_diff)
             head_pitch.setPosition(head_pitch_sensor.getValue() - pitch_diff)
 
-            if object_node is not None:
-                # Get the object's position
-                position = object_node.getPosition()
-                print("Object position:", position)
-            else:
-                print("Object not found. Object name:", name_obj)
     
     mask_3ch = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
     
@@ -113,9 +105,7 @@ while supervisor.step(timestep) != -1:
         cv2.rectangle(frame, tl, br, (0, 0, 255), 2)
     
     res = np.concatenate((frame, mask_3ch), axis=1)
-    
 
-    
     cv2.imshow("frame", res)
     cv2.waitKey(timestep)
 cv2.destroyAllWindows()
