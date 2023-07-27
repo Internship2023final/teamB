@@ -1,0 +1,27 @@
+#VRML_SIM R2023b utf8
+PROTO SAHRV74Robocup [
+  field  SFVec3f     translation     0 0 0
+  field  SFRotation  rotation        0 1 0 0
+  field  SFString    name            "red player 1"  # Is `Robot.name`.
+  field  MFString    controller  "ik_walk"          # Is `Robot.controllerArgs`.
+  field  MFString    controllerArgs  []          # Is `Robot.controllerArgs`.
+  field  SFString    customData      ""
+]
+
+{
+  SAHRV74 {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    controllerArgs IS controllerArgs
+    customData IS customData
+    controller IS controller
+
+    # Add the GPS sensor node
+       GPS{
+          name "gps"}
+          InertialUnit{name "imu"}
+
+    # Route GPS data to the robot's position
+  }
+}
